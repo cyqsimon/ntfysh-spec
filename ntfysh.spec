@@ -11,7 +11,7 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 BuildRequires:  curl gcc golang jq
-%if 0%{?el7} || 0%{?el9}
+%if 0%{?el7} || 0%{?el9} || 0%{?fedora}
 BuildRequires:  python3-pip
 %endif
 %if 0%{?el8}
