@@ -28,7 +28,7 @@ entirely without signup or cost. It's also open source if you want to run your o
 %autosetup -n %{_prj_name}-%{version}
 
 # if Go 1.18 is not available, get the static binaries
-%if 0%{?rhel} < 10 || 0%{?fedora} < 36
+%if ! ( 0%{?rhel} >= 10 || 0%{?fedora} >= 36 )
     _GO_VER="1.18.4"
     %ifarch x86_64
         _ARCH=amd64
