@@ -98,7 +98,6 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_unitdir}/%{_prj_name}.service
 %{_sysconfdir}/%{_prj_name}/*
 %{_docdir}/%{name}/*
-# things to cleanup upon removal
 %{_localstatedir}/cache/%{_prj_name}
 %{_sharedstatedir}/%{_prj_name}
 
