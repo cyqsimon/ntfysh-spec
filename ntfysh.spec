@@ -1,5 +1,6 @@
 %global debug_package %{nil}
 %global _prj_name ntfy
+%global _unitdir %{_prefix}/lib/systemd/system
 
 Name:           ntfysh
 Version:        1.27.2
@@ -60,18 +61,40 @@ make cli-linux-server
 
 %install
 # bin
-install -Dpm 755 dist/ntfy_linux_server/%{_prj_name} %{buildroot}%{_bindir}/%{name}
+install -Dpm 755 dist/ntfy_linux_server/%{_prj_name} %{buildroot}%{_bindir}/%{_prj_name}
+
+# logo
+install -Dpm 644 web/src/img/%{_prj_name}.png %{buildroot}%{_datadir}/%{_prj_name}/logo.png
+
+# units
+install -Dpm 644 client/%{_prj_name}-client.service %{buildroot}%{_unitdir}/%{_prj_name}-client.service
+install -Dpm 644 server/%{_prj_name}.service %{buildroot}%{_unitdir}/%{_prj_name}.service
+
+# configs
+install -Dpm 644 client/client.yml %{buildroot}%{_sysconfdir}/%{_prj_name}/client.yml
+install -Dpm 644 server/server.yml %{buildroot}%{_sysconfdir}/%{_prj_name}/server.yml
 
 # doc
-mkdir -p %{buildroot}%{_docdir}/%{name}
-cp -r docs/subscribe %{buildroot}%{_docdir}/%{name}/
-install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{name}
+mkdir -p %{buildroot}%{_docdir}/%{_prj_name}
+cp -r docs/subscribe %{buildroot}%{_docdir}/%{_prj_name}/
+install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{_prj_name}
+
+# var dirs
+mkdir -p %{buildroot}%{_localstatedir}/cache/%{_prj_name}
+mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 
 %files
 %license LICENSE LICENSE.GPLv2
 %doc README.md
-%{_bindir}/%{name}
-%{_docdir}/%{name}/*
+%{_bindir}/%{_prj_name}
+%{_datadir}/%{_prj_name}/*
+%{_unitdir}/%{_prj_name}-client.service
+%{_unitdir}/%{_prj_name}.service
+%{_sysconfdir}/%{_prj_name}/*
+%{_docdir}/%{_prj_name}/*
+# things to cleanup upon removal
+%{_localstatedir}/cache/%{_prj_name}
+%{_sharedstatedir}/%{_prj_name}
 
 %changelog
 * Fri Jul 22 2022 cyqsimon - 1.27.2-1
