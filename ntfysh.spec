@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global %{_prj_name} ntfy
+%global _prj_name ntfy
 
 Name:           ntfysh
 Version:        1.27.2
