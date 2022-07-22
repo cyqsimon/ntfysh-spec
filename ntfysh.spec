@@ -2,6 +2,12 @@
 %global _prj_name ntfy
 %global _unitdir %{_prefix}/lib/systemd/system
 
+%if 0%{?rhel} >= 10 || 0%{?fedora} >= 36
+    %global _need_static_go_bin 0
+%else
+    %global _need_static_go_bin 1
+%endif
+
 Name:           ntfysh
 Version:        1.27.2
 Release:        1%{?dist}
@@ -14,7 +20,7 @@ Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 BuildRequires:  curl gcc git glibc-static jq
 # Go 1.18 is required for now
 # See https://github.com/golang/go/issues/45435
-%if 0%{?rhel} >= 10 || 0%{?fedora} >= 36
+%if ! %{_need_static_go_bin}
 BuildRequires: golang
 %endif
 
@@ -28,7 +34,7 @@ entirely without signup or cost. It's also open source if you want to run your o
 %autosetup -n %{_prj_name}-%{version}
 
 # if Go 1.18 is not available, get the static binaries
-%if ! ( 0%{?rhel} >= 10 || 0%{?fedora} >= 36 )
+%if %{_need_static_go_bin}
     _GO_VER="1.18.4"
     %ifarch x86_64
         _ARCH=amd64
@@ -49,7 +55,7 @@ entirely without signup or cost. It's also open source if you want to run your o
 %endif
 
 %build
-%if 0%{?rhel} < 10 || 0%{?fedora} < 36
+%if %{_need_static_go_bin}
     _GO_BIN_DIR=$(realpath "go/bin")
     export PATH="${_GO_BIN_DIR}:${PATH}"
 %endif
