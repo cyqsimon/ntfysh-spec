@@ -2,6 +2,8 @@
 %global _prj_name ntfy
 %global _unitdir %{_prefix}/lib/systemd/system
 
+# Go 1.18 is required for now
+# See https://github.com/golang/go/issues/45435
 %if 0%{?rhel} >= 10 || 0%{?fedora} >= 36
     %global _need_static_go_bin 0
 %else
@@ -18,8 +20,6 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 BuildRequires:  curl gcc git glibc-static jq
-# Go 1.18 is required for now
-# See https://github.com/golang/go/issues/45435
 %if ! %{_need_static_go_bin}
 BuildRequires: golang
 %endif
