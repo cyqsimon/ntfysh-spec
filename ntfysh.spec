@@ -10,12 +10,11 @@ License:        Apache-2.0 or GPLv2
 URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
-BuildRequires:  curl gcc git glibc-static golang jq
-%if 0%{?el7} || 0%{?el9} || 0%{?fedora}
-BuildRequires:  python3-pip
-%endif
-%if 0%{?el8}
-BuildRequires:  python39-pip
+BuildRequires:  curl gcc git glibc-static jq
+# Go 1.18 is required for now
+# See https://github.com/golang/go/issues/45435
+%if 0%{?rhel} >= 10 || 0%{?fedora} >= 36
+BuildRequires: golang
 %endif
 
 %description
@@ -27,7 +26,32 @@ entirely without signup or cost. It's also open source if you want to run your o
 %prep
 %autosetup -n %{_prj_name}-%{version}
 
+# if Go 1.18 is not available, get the static binaries
+%if 0%{?rhel} < 10 || 0%{?fedora} < 36
+    _GO_VER="1.18.4"
+    %ifarch x86_64
+        _ARCH=amd64
+    %endif
+    %ifarch aarch64
+        _ARCH=arm64
+    %endif
+    if [[ -z "${_ARCH}" ]]; then
+        echo "Unsupported architecture!"
+        exit 1
+    fi
+    _GO_DL_NAME="go${_GO_VER}.linux-${_ARCH}.tar.gz"
+    _GO_DL_URL="https://go.dev/dl/${_GO_DL_NAME}"
+
+    curl -Lfo "${_GO_DL_NAME}" "${_GO_DL_URL}"
+    tar -xf "${_GO_DL_NAME}"
+    # bins in go/bin
+%endif
+
 %build
+%if 0%{?rhel} < 10 || 0%{?fedora} < 36
+    _GO_BIN_DIR=$(realpath "go/bin")
+    export PATH="${_GO_BIN_DIR}:${PATH}"
+%endif
 make cli-linux-server
 
 %check
