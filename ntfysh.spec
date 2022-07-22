@@ -35,7 +35,7 @@ make test
 
 %install
 # bin
-install -Dpm 755 dist/ntfy_linux_server/%{_prj_name} %{buildroot}%{_bindir}/%{_prj_name}
+install -Dpm 755 dist/ntfy_linux_server/%{_prj_name} %{buildroot}%{_bindir}/%{name}
 
 # doc
 mkdir -p %{buildroot}%{_docdir}/%{name}
@@ -45,7 +45,7 @@ install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{name}
 %files
 %license LICENSE LICENSE.GPLv2
 %doc README.md
-%{_bindir}/%{_prj_name}
+%{_bindir}/%{name}
 %{_docdir}/%{name}/*
 
 %changelog
