@@ -75,9 +75,9 @@ install -Dpm 644 client/client.yml %{buildroot}%{_sysconfdir}/%{_prj_name}/clien
 install -Dpm 644 server/server.yml %{buildroot}%{_sysconfdir}/%{_prj_name}/server.yml
 
 # doc
-mkdir -p %{buildroot}%{_docdir}/%{_prj_name}
-cp -r docs/subscribe %{buildroot}%{_docdir}/%{_prj_name}/
-install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{_prj_name}
+mkdir -p %{buildroot}%{_docdir}/%{name}
+cp -r docs/subscribe %{buildroot}%{_docdir}/%{name}/
+install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{name}
 
 # var dirs
 mkdir -p %{buildroot}%{_localstatedir}/cache/%{_prj_name}
@@ -91,7 +91,7 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_unitdir}/%{_prj_name}-client.service
 %{_unitdir}/%{_prj_name}.service
 %{_sysconfdir}/%{_prj_name}/*
-%{_docdir}/%{_prj_name}/*
+%{_docdir}/%{name}/*
 # things to cleanup upon removal
 %{_localstatedir}/cache/%{_prj_name}
 %{_sharedstatedir}/%{_prj_name}
