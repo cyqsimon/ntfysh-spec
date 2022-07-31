@@ -12,7 +12,7 @@
 
 Name:           ntfysh
 Version:        1.27.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        Apache-2.0 or GPLv2
@@ -96,11 +96,14 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_datadir}/%{_prj_name}/*
 %{_unitdir}/%{_prj_name}-client.service
 %{_unitdir}/%{_prj_name}.service
-%{_sysconfdir}/%{_prj_name}/*
+%config(noreplace) %{_sysconfdir}/%{_prj_name}/*
 %{_docdir}/%{name}/*
 %{_localstatedir}/cache/%{_prj_name}
 %{_sharedstatedir}/%{_prj_name}
 
 %changelog
+* Sun Jul 31 2022 cyqsimon - 1.27.2-2
+- Mark config files as 'noreplace'
+
 * Fri Jul 22 2022 cyqsimon - 1.27.2-1
 - Release 1.27.2
