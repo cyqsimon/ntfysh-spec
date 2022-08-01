@@ -12,7 +12,7 @@
 
 Name:           ntfysh
 Version:        1.27.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        Apache-2.0 or GPLv2
@@ -59,7 +59,12 @@ entirely without signup or cost. It's also open source if you want to run your o
     _GO_BIN_DIR=$(realpath "go/bin")
     export PATH="${_GO_BIN_DIR}:${PATH}"
 %endif
-make cli-linux-server
+
+# patch Makefile, see https://github.com/binwiederhier/ntfy/pull/373
+%global _commit 69d6cdd
+sed -i 's|$(shell git rev-parse --short HEAD)|%{_commit}|' Makefile
+
+make VERSION=%{version} cli-linux-server
 
 %check
 # a few tests are erroring, but it's probably fine
@@ -102,6 +107,9 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_sharedstatedir}/%{_prj_name}
 
 %changelog
+* Tue Aug 02 2022 cyqsimon - 1.27.2-3
+- Patch 'commit' variable in 'Makefile' to fix build
+
 * Sun Jul 31 2022 cyqsimon - 1.27.2-2
 - Mark config files as 'noreplace'
 
