@@ -98,10 +98,8 @@ cp -r docs/subscribe %{buildroot}%{_docdir}/%{name}/
 install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{name}
 
 # var dirs
-mkdir -p %{buildroot}%{_localstatedir}/cache
-install -dm 750 -o %{_ntfy_user} -g %{_ntfy_user} %{buildroot}%{_localstatedir}/cache/%{_prj_name}
-mkdir -p %{buildroot}%{_sharedstatedir}
-install -dm 750 -o %{_ntfy_user} -g %{_ntfy_user} %{buildroot}%{_sharedstatedir}/%{_prj_name}
+mkdir -p %{buildroot}%{_localstatedir}/cache/%{_prj_name}
+mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 
 %files
 %license LICENSE LICENSE.GPLv2
@@ -112,8 +110,8 @@ install -dm 750 -o %{_ntfy_user} -g %{_ntfy_user} %{buildroot}%{_sharedstatedir}
 %{_unitdir}/%{_prj_name}.service
 %config(noreplace) %{_sysconfdir}/%{_prj_name}/*
 %{_docdir}/%{name}/*
-%{_localstatedir}/cache/%{_prj_name}
-%{_sharedstatedir}/%{_prj_name}
+%attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_localstatedir}/cache/%{_prj_name}
+%attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_sharedstatedir}/%{_prj_name}
 
 %changelog
 * Tue Aug 02 2022 cyqsimon - 1.27.2-4
