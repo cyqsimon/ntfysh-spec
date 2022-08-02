@@ -13,7 +13,7 @@
 
 Name:           ntfysh
 Version:        1.27.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        Apache-2.0 or GPLv2
@@ -33,9 +33,19 @@ It allows you to send notifications to your phone or desktop via scripts from an
 entirely without signup or cost. It's also open source if you want to run your own.
 
 %pre
+# make sure the user '%{_ntfy_user}' exists
 getent passwd %{_ntfy_user} >/dev/null || \
     useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
     --no-create-home --comment "ntfy service user" %{_ntfy_user}
+
+%preun
+# if remove, then stop and disable services
+if [[ "$1" -lt 1 ]]; then
+    for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
+        echo "Stopping and disabling ${SVC} ..."
+        systemctl disable --now ${SVC}
+    done
+fi
 
 %prep
 %autosetup -n %{_prj_name}-%{version}
@@ -113,7 +123,22 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_localstatedir}/cache/%{_prj_name}
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_sharedstatedir}/%{_prj_name}
 
+%post
+# if update, then restart services if running
+if [[ "$1" -gt 1 ]]; then
+    systemctl daemon-reload
+    for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
+        if systemctl -q is-active ${SVC}; then
+            echo "Restarting ${SVC} ..."
+            systemctl restart ${SVC}
+        fi
+    done
+fi
+
 %changelog
+* Tue Aug 02 2022 cyqsimon - 1.27.2-5
+- Add scriptlets relating to systemd
+
 * Tue Aug 02 2022 cyqsimon - 1.27.2-4
 - Add 'ntfy' user and group
 - Install dirs under '/var' with owner set to 'ntfy'
