@@ -1,5 +1,6 @@
 %global debug_package %{nil}
 %global _prj_name ntfy
+%global _ntfy_user ntfy
 %global _unitdir %{_prefix}/lib/systemd/system
 
 # Go 1.18 is required for now
@@ -12,16 +13,17 @@
 
 Name:           ntfysh
 Version:        1.27.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        Apache-2.0 or GPLv2
 URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
+Requires(pre):  shadow-utils
 BuildRequires:  curl gcc git glibc-static jq
 %if ! %{_need_static_go_bin}
-BuildRequires: golang
+BuildRequires:  golang
 %endif
 
 %description
@@ -29,6 +31,11 @@ ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
 
 It allows you to send notifications to your phone or desktop via scripts from any computer,
 entirely without signup or cost. It's also open source if you want to run your own.
+
+%pre
+getent passwd %{_ntfy_user} >/dev/null || \
+    useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
+    --no-create-home --comment "ntfy service user" %{_ntfy_user}
 
 %prep
 %autosetup -n %{_prj_name}-%{version}
@@ -91,8 +98,10 @@ cp -r docs/subscribe %{buildroot}%{_docdir}/%{name}/
 install -Dpm 644 docs/*.md %{buildroot}%{_docdir}/%{name}
 
 # var dirs
-mkdir -p %{buildroot}%{_localstatedir}/cache/%{_prj_name}
-mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
+mkdir -p %{buildroot}%{_localstatedir}/cache
+install -dm 750 -o %{_ntfy_user} -g %{_ntfy_user} %{buildroot}%{_localstatedir}/cache/%{_prj_name}
+mkdir -p %{buildroot}%{_sharedstatedir}
+install -dm 750 -o %{_ntfy_user} -g %{_ntfy_user} %{buildroot}%{_sharedstatedir}/%{_prj_name}
 
 %files
 %license LICENSE LICENSE.GPLv2
@@ -107,6 +116,10 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_sharedstatedir}/%{_prj_name}
 
 %changelog
+* Tue Aug 02 2022 cyqsimon - 1.27.2-4
+- Add 'ntfy' user and group
+- Install dirs under '/var' with owner set to 'ntfy'
+
 * Tue Aug 02 2022 cyqsimon - 1.27.2-3
 - Patch 'commit' variable in 'Makefile' to fix build
 
