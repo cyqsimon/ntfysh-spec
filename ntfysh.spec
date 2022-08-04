@@ -13,7 +13,7 @@
 
 Name:           ntfysh
 Version:        1.27.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        Apache-2.0 or GPLv2
@@ -135,6 +135,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Thu Aug 04 2022 cyqsimon - 1.27.2-6
+- Bump static go binaries version
+
 * Tue Aug 02 2022 cyqsimon - 1.27.2-5
 - Add scriptlets relating to systemd
 
