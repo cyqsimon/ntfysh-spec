@@ -50,9 +50,8 @@ fi
 %prep
 %autosetup -n %{_prj_name}-%{version}
 
-# if Go 1.18 is not available, get the static binaries
 %if %{_need_static_go_bin}
-    _GO_VER="1.18.4"
+    _GO_VER="1.19"
     %ifarch x86_64
         _ARCH=amd64
     %endif
