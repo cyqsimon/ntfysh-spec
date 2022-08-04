@@ -32,21 +32,6 @@ ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
 It allows you to send notifications to your phone or desktop via scripts from any computer,
 entirely without signup or cost. It's also open source if you want to run your own.
 
-%pre
-# make sure the user '%{_ntfy_user}' exists
-getent passwd %{_ntfy_user} >/dev/null || \
-    useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
-    --no-create-home --comment "ntfy service user" %{_ntfy_user}
-
-%preun
-# if remove, then stop and disable services
-if [[ "$1" -lt 1 ]]; then
-    for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
-        echo "Stopping and disabling ${SVC} ..."
-        systemctl disable --now ${SVC}
-    done
-fi
-
 %prep
 %autosetup -n %{_prj_name}-%{version}
 
@@ -121,6 +106,21 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_docdir}/%{name}/*
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_localstatedir}/cache/%{_prj_name}
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_sharedstatedir}/%{_prj_name}
+
+%pre
+# make sure the user '%{_ntfy_user}' exists
+getent passwd %{_ntfy_user} >/dev/null || \
+    useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
+    --no-create-home --comment "ntfy service user" %{_ntfy_user}
+
+%preun
+# if remove, then stop and disable services
+if [[ "$1" -lt 1 ]]; then
+    for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
+        echo "Stopping and disabling ${SVC} ..."
+        systemctl disable --now ${SVC}
+    done
+fi
 
 %post
 # if update, then restart services if running
