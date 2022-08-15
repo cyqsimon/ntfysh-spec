@@ -16,7 +16,7 @@ Version:        1.27.2
 Release:        6%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
-License:        Apache-2.0 or GPLv2
+License:        ASL 2.0 or GPLv2
 URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
@@ -29,8 +29,9 @@ BuildRequires:  golang
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
 
-It allows you to send notifications to your phone or desktop via scripts from any computer,
-entirely without signup or cost. It's also open source if you want to run your own.
+It allows you to send notifications to your phone or desktop via scripts from
+any computer, entirely without signup or cost. It's also open source if you
+want to run your own.
 
 %prep
 %autosetup -n %{_prj_name}-%{version}
