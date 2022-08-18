@@ -1,7 +1,6 @@
 %global debug_package %{nil}
 %global _prj_name ntfy
 %global _ntfy_user ntfy
-%global _unitdir %{_prefix}/lib/systemd/system
 
 # Go 1.18 is required for now
 # See https://github.com/golang/go/issues/45435
