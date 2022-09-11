@@ -20,7 +20,7 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
-BuildRequires:  curl gcc git glibc-static jq
+BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros
 %if ! %{_need_static_go_bin}
 BuildRequires:  golang
 %endif
