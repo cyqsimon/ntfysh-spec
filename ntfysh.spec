@@ -1,4 +1,5 @@
 %global debug_package %{nil}
+%global _commit d3cfa34
 %global _prj_name ntfy
 %global _ntfy_user ntfy
 
@@ -11,8 +12,8 @@
 %endif
 
 Name:           ntfysh
-Version:        1.27.2
-Release:        6%{?dist}
+Version:        1.28.0
+Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 or GPLv2
@@ -61,11 +62,7 @@ want to run your own.
     export PATH="${_GO_BIN_DIR}:${PATH}"
 %endif
 
-# patch Makefile, see https://github.com/binwiederhier/ntfy/pull/373
-%global _commit 69d6cdd
-sed -i 's|$(shell git rev-parse --short HEAD)|%{_commit}|' Makefile
-
-make VERSION=%{version} cli-linux-server
+make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
 
 %check
 # a few tests are erroring, but it's probably fine
@@ -135,6 +132,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Wed Sep 28 2022 cyqsimon - 1.28.0-1
+- Release 1.28.0
+
 * Thu Aug 04 2022 cyqsimon - 1.27.2-6
 - Bump static go binaries version
 
