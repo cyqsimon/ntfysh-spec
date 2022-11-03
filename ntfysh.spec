@@ -37,7 +37,7 @@ want to run your own.
 %autosetup -n %{_prj_name}-%{version}
 
 %if %{_need_static_go_bin}
-    _GO_VER="1.19.1"
+    _GO_VER="$(curl -Lf https://golang.org/VERSION?m=text)"
     %ifarch x86_64
         _ARCH=amd64
     %endif
@@ -48,7 +48,7 @@ want to run your own.
         echo "Unsupported architecture!"
         exit 1
     fi
-    _GO_DL_NAME="go${_GO_VER}.linux-${_ARCH}.tar.gz"
+    _GO_DL_NAME="${_GO_VER}.linux-${_ARCH}.tar.gz"
     _GO_DL_URL="https://go.dev/dl/${_GO_DL_NAME}"
 
     curl -Lfo "${_GO_DL_NAME}" "${_GO_DL_URL}"
