@@ -12,7 +12,7 @@
 %endif
 
 Name:           ntfysh
-Version:        1.28.0
+Version:        1.29.0
 Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
@@ -132,6 +132,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Sun Nov 13 2022 cyqsimon - 1.29.0-1
+- Release 1.29.0
+
 * Wed Sep 28 2022 cyqsimon - 1.28.0-1
 - Release 1.28.0
 
