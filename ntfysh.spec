@@ -1,5 +1,5 @@
 %global debug_package %{nil}
-%global _commit d3cfa34
+%global _commit c5b2c8c
 %global _prj_name ntfy
 %global _ntfy_user ntfy
 
@@ -12,7 +12,7 @@
 %endif
 
 Name:           ntfysh
-Version:        1.29.0
+Version:        1.29.1
 Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
@@ -132,6 +132,10 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Fri Nov 18 2022 cyqsimon - 1.29.1-1
+- Release 1.29.1
+- Set correct commit hash
+
 * Sun Nov 13 2022 cyqsimon - 1.29.0-1
 - Release 1.29.0
 
