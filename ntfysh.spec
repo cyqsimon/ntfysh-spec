@@ -5,7 +5,7 @@
 
 # Go 1.18 is required for now
 # See https://github.com/golang/go/issues/45435
-%if 0%{?rhel} >= 10 || 0%{?fedora} >= 36
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 36
     %global _need_static_go_bin 0
 %else
     %global _need_static_go_bin 1
