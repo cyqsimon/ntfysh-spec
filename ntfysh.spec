@@ -13,7 +13,7 @@
 
 Name:           ntfysh
 Version:        1.30.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 or GPLv2
@@ -21,7 +21,7 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
-BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros
+BuildRequires:  curl gcc git glibc-static jq npm systemd-rpm-macros
 %if ! %{_need_static_go_bin}
 BuildRequires:  golang
 %endif
@@ -62,6 +62,7 @@ want to run your own.
     export PATH="${_GO_BIN_DIR}:${PATH}"
 %endif
 
+make web
 make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
 
 %check
@@ -132,6 +133,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Sun Dec 25 2022 cyqsimon - 1.30.1-2
+- Build web app
+
 * Sat Dec 24 2022 cyqsimon - 1.30.1-1
 - Release 1.30.1
 
