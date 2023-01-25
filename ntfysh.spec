@@ -3,14 +3,6 @@
 %global _prj_name ntfy
 %global _ntfy_user ntfy
 
-# Go 1.18 is required for now
-# See https://github.com/golang/go/issues/45435
-%if 0%{?rhel} >= 7 || 0%{?fedora} >= 36
-    %global _need_static_go_bin 0
-%else
-    %global _need_static_go_bin 1
-%endif
-
 Name:           ntfysh
 Version:        1.30.1
 Release:        2%{?dist}
@@ -21,10 +13,7 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
-BuildRequires:  curl gcc git glibc-static jq npm systemd-rpm-macros
-%if ! %{_need_static_go_bin}
-BuildRequires:  golang
-%endif
+BuildRequires:  git golang jq npm systemd-rpm-macros
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -36,32 +25,7 @@ want to run your own.
 %prep
 %autosetup -n %{_prj_name}-%{version}
 
-%if %{_need_static_go_bin}
-    _GO_VER="$(curl -Lf https://golang.org/VERSION?m=text)"
-    %ifarch x86_64
-        _ARCH=amd64
-    %endif
-    %ifarch aarch64
-        _ARCH=arm64
-    %endif
-    if [[ -z "${_ARCH}" ]]; then
-        echo "Unsupported architecture!"
-        exit 1
-    fi
-    _GO_DL_NAME="${_GO_VER}.linux-${_ARCH}.tar.gz"
-    _GO_DL_URL="https://go.dev/dl/${_GO_DL_NAME}"
-
-    curl -Lfo "${_GO_DL_NAME}" "${_GO_DL_URL}"
-    tar -xf "${_GO_DL_NAME}"
-    # bins in go/bin
-%endif
-
 %build
-%if %{_need_static_go_bin}
-    _GO_BIN_DIR=$(realpath "go/bin")
-    export PATH="${_GO_BIN_DIR}:${PATH}"
-%endif
-
 make web
 make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
 
