@@ -1,14 +1,14 @@
 %global debug_package %{nil}
-%global _commit 4e7e6e5
+%global _commit 396e61c
 %global _prj_name ntfy
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        1.30.1
-Release:        2%{?dist}
+Version:        1.31.0
+Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
-License:        ASL 2.0 or GPLv2
+License:        ASL 2.0 AND GPLv2
 URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
@@ -97,6 +97,10 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Wed Feb 15 2023 cyqsimon - 1.31.0-1
+- Release 1.31.0
+- Two licenses are conjunctive not disjunctive
+
 * Sun Dec 25 2022 cyqsimon - 1.30.1-2
 - Build web app
 
