@@ -13,7 +13,7 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
-BuildRequires:  git golang jq npm systemd-rpm-macros
+BuildRequires:  git glibc-static golang jq npm systemd-rpm-macros
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
