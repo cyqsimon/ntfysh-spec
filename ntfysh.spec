@@ -30,8 +30,8 @@ make web
 make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
 
 %check
-# a few tests are erroring, but it's probably fine
-#make test
+# a few tests are spuriously erroring, but it's probably fine
+make test
 
 %install
 # bin
@@ -99,6 +99,7 @@ fi
 %changelog
 * Fri Feb 17 2023 cyqsimon - 2.0.0-1
 - Release 2.0.0
+- Re-enable tests
 
 * Wed Feb 15 2023 cyqsimon - 1.31.0-1
 - Release 1.31.0
