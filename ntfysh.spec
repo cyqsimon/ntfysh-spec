@@ -5,7 +5,7 @@
 
 Name:           ntfysh
 Version:        2.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -70,7 +70,8 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_sharedstatedir}/%{_prj_name}
 
 %pre
-# make sure the user '%{_ntfy_user}' exists
+# create user
+echo "Creating user '%{_ntfy_user}' if it does not exist..."
 getent passwd %{_ntfy_user} >/dev/null || \
     useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
     --no-create-home --comment "ntfy service user" %{_ntfy_user}
@@ -89,14 +90,15 @@ fi
 if [[ "$1" -gt 1 ]]; then
     systemctl daemon-reload
     for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
-        if systemctl -q is-active ${SVC}; then
-            echo "Restarting ${SVC} ..."
-            systemctl restart ${SVC}
-        fi
+        echo "Restarting ${SVC} if it's running..."
+        systemctl try-restart ${SVC}
     done
 fi
 
 %changelog
+* Thu Feb 23 2023 cyqsimon - 2.0.1-2
+- Improve scriptlets
+
 * Sat Feb 18 2023 cyqsimon - 2.0.1-1
 - Release 2.0.1
 
