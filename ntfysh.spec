@@ -13,7 +13,7 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
-BuildRequires:  git glibc-static golang jq npm systemd-rpm-macros
+BuildRequires:  curl gcc git glibc-static jq npm systemd-rpm-macros tar
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -25,12 +25,36 @@ want to run your own.
 %prep
 %autosetup -n %{_prj_name}-%{version}
 
+# Use latest official stable Go build
+_GO_VER="$(curl -Lf https://golang.org/VERSION?m=text)"
+%ifarch x86_64
+    _ARCH=amd64
+%endif
+%ifarch aarch64
+    _ARCH=arm64
+%endif
+if [[ -z "${_ARCH}" ]]; then
+    echo "Unsupported architecture!"
+    exit 1
+fi
+_GO_DL_NAME="${_GO_VER}.linux-${_ARCH}.tar.gz"
+_GO_DL_URL="https://go.dev/dl/${_GO_DL_NAME}"
+
+curl -Lfo "${_GO_DL_NAME}" "${_GO_DL_URL}"
+tar -xf "${_GO_DL_NAME}"
+# bins in go/bin
+
 %build
+_GO_BIN_DIR=$(realpath "go/bin")
+export PATH="${_GO_BIN_DIR}:${PATH}"
+
 make web
 make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
 
 %check
-# a few tests are spuriously erroring, but it's probably fine
+_GO_BIN_DIR=$(realpath "go/bin")
+export PATH="${_GO_BIN_DIR}:${PATH}"
+
 make test
 
 %install
@@ -98,6 +122,7 @@ fi
 %changelog
 * Thu Mar 02 2023 cyqsimon - 2.1.1-1
 - Release 2.1.1
+- Always use latest official stable Go build
 
 * Sun Feb 26 2023 cyqsimon - 2.1.0-1
 - Release 2.1.0
