@@ -1,10 +1,10 @@
 %global debug_package %{nil}
-%global _commit f1bcc26
+%global _commit 64b3c3c
 %global _prj_name ntfy
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.1.0
+Version:        2.1.1
 Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
@@ -96,6 +96,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Thu Mar 02 2023 cyqsimon - 2.1.1-1
+- Release 2.1.1
+
 * Sun Feb 26 2023 cyqsimon - 2.1.0-1
 - Release 2.1.0
 
