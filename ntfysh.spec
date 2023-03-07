@@ -5,7 +5,7 @@
 
 Name:           ntfysh
 Version:        2.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -14,6 +14,16 @@ Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
 BuildRequires:  curl gcc git glibc-static jq npm systemd-rpm-macros tar
+# Python 3.8 or newer needed to build docs
+%if 0%{?el7}
+BuildRequires:  rh-python38
+%endif
+%if 0%{?el8}
+BuildRequires:  python39-pip
+%endif
+%if 0%{?rhel} >=9 || 0%{?fedora}
+BuildRequires:  python3-pip
+%endif
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -48,6 +58,12 @@ tar -xf "${_GO_DL_NAME}"
 _GO_BIN_DIR=$(realpath "go/bin")
 export PATH="${_GO_BIN_DIR}:${PATH}"
 
+# enable Python3.8 on EL7
+%if 0%{?el7}
+source /opt/rh/rh-python38/enable
+%endif
+
+make docs
 make web
 make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
 
@@ -120,6 +136,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Wed Mar 08 2023 cyqsimon - 2.1.2-2
+- Build docs
+
 * Mon Mar 06 2023 cyqsimon - 2.1.2-1
 - Release 2.1.2
 
