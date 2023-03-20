@@ -13,7 +13,13 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 
 Requires(pre):  shadow-utils
-BuildRequires:  curl gcc git glibc-static jq npm systemd-rpm-macros tar
+BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros tar
+# npm is packaged under different names
+%if 0%{?rhel} >= 10 || 0%{?fedora} >= 37
+BuildRequires: nodejs-npm
+%else
+BuildRequires: npm
+%endif
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -122,6 +128,7 @@ fi
 %changelog
 * Tue Mar 21 2023 cyqsimon - 2.2.0-1
 - Release 2.2.0
+- Declare `npm` dependency under different names
 
 * Mon Mar 06 2023 cyqsimon - 2.1.2-1
 - Release 2.1.2
