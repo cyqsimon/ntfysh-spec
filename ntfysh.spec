@@ -32,7 +32,7 @@ want to run your own.
 %autosetup -n %{_prj_name}-%{version}
 
 # Use latest official stable Go build
-_GO_VER="$(curl -Lf https://golang.org/VERSION?m=text)"
+_GO_VER="$(curl -Lf https://golang.org/VERSION?m=text | head -n1)"
 %ifarch x86_64
     _ARCH=amd64
 %endif
