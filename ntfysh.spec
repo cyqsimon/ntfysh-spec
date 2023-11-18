@@ -1,11 +1,10 @@
 %global debug_package %{nil}
-%global _commit 2f0ec88
 %global _prj_name ntfy
 %global _ntfy_user ntfy
 
 Name:           ntfysh
 Version:        2.7.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -20,6 +19,11 @@ BuildRequires: nodejs-npm
 %else
 BuildRequires: npm
 %endif
+
+%global _api_base_url https://api.github.com/repos/binwiederhier/ntfy/git
+%global _tag_sha %(curl -Ssf %{_api_base_url}/ref/tags/v%{version} | jq -re '.object.sha')
+%global _commit_sha %(curl -Ssf %{_api_base_url}/tags/%{_tag_sha} | jq -re '.object | select(.type == "commit") | .sha')
+%global _commit_sha_short %(head -c 7 <<< %{_commit_sha})
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -55,7 +59,7 @@ _GO_BIN_DIR=$(realpath "go/bin")
 export PATH="${_GO_BIN_DIR}:${PATH}"
 
 make web
-make VERSION=%{version} COMMIT=%{_commit} cli-linux-server
+make VERSION=%{version} COMMIT=%{_commit_sha_short} cli-linux-server
 
 %check
 _GO_BIN_DIR=$(realpath "go/bin")
@@ -126,6 +130,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Sat Nov 18 2023 cyqsimon - 2.7.0-2
+- Automatically obtain commit SHA
+
 * Fri Aug 18 2023 cyqsimon - 2.7.0-1
 - Release 2.7.0
 
