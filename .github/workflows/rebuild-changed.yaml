@@ -1,0 +1,68 @@
+# This workflow triggers a rebuild on COPR via webhook on spec file changes.
+
+name: Rebuild on COPR
+on:
+  push:
+    branches:
+      - master
+      - cicd-testing
+  workflow_dispatch:
+
+jobs:
+  trigger-rebuild-on-modify:
+    name: Trigger rebuild
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      builds: ${{ steps.send-request.outputs.build_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for modification
+        id: spec-modified
+        uses: tj-actions/changed-files@v39
+        with:
+          files: ntfysh.spec
+
+      - name: Send rebuild request to COPR
+        id: send-request
+        env:
+          URL: ${{ secrets.COPR_WEBHOOK_URL }}
+        run: |
+          if [[ -n "${{ steps.spec-modified.outputs.modified_files }}" ]]; then
+            echo "Spec file changed; sending rebuild request"
+            BUILD_ID=$(curl -Ssf -X POST "$URL")
+            echo "Build submitted: https://copr.fedorainfracloud.org/coprs/build/$BUILD_ID"
+            echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+          fi
+
+  report-status:
+    name: Report build status
+    needs: trigger-rebuild-on-modify
+    runs-on: ubuntu-latest
+    if: needs.trigger-rebuild-on-modify.outputs.builds != ''
+    steps:
+      - name: Report status
+        run: |
+          while true; do
+            STATUS=$(curl -Ssf "https://copr.fedorainfracloud.org/api_3/build/${{ needs.trigger-rebuild-on-modify.outputs.builds }}" | jq -r '.state')
+            case $STATUS in
+              pending | starting | importing | imported | waiting | running)
+                echo "Build is $STATUS. Querying again in 15s."
+                sleep 15
+                ;;
+              succeeded | forked)
+                echo "Build $STATUS."
+                exit 0
+                ;;
+              failed | canceled | skipped)
+                echo "Build $STATUS."
+                exit 1
+                ;;
+              *)
+                echo "COPR API reported unknown status: $STATUS."
+                exit 2
+                ;;
+            esac
+          done
