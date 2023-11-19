@@ -57,8 +57,15 @@ make web
 
 # Fetch commit SHA
 API_BASE_URL="https://api.github.com/repos/binwiederhier/ntfy/git"
-TAG_SHA=$(curl -Ssf "${API_BASE_URL}/ref/tags/v%{version}" | jq -re '.object.sha')
-COMMIT_SHA=$(curl -Ssf "${API_BASE_URL}/tags/${TAG_SHA}" | jq -re '.object | select(.type == "commit") | .sha')
+TAG_INFO="$(curl -Ssf "${API_BASE_URL}/ref/tags/v%{version}")"
+if jq -e '.object.type == "tag"' <<< "$TAG_INFO"; then
+    # annotated tag
+    TAG_SHA=$(curl -Ssf "${API_BASE_URL}/ref/tags/v%{version}" | jq -re '.object.sha')
+    COMMIT_SHA=$(curl -Ssf "${API_BASE_URL}/tags/${TAG_SHA}" | jq -re '.object.sha')
+else
+    # lightweight tag
+    COMMIT_SHA=$(jq -re '.object.sha' <<< "$TAG_INFO")
+fi
 COMMIT_SHA_SHORT=$(head -c 7 <<< ${COMMIT_SHA})
 make VERSION=%{version} COMMIT=${COMMIT_SHA_SHORT} cli-linux-server
 
