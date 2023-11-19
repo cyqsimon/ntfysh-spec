@@ -4,7 +4,7 @@
 
 Name:           ntfysh
 Version:        2.7.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -19,11 +19,6 @@ BuildRequires: nodejs-npm
 %else
 BuildRequires: npm
 %endif
-
-%global _api_base_url https://api.github.com/repos/binwiederhier/ntfy/git
-%global _tag_sha %(curl -Ssf %{_api_base_url}/ref/tags/v%{version} | jq -re '.object.sha')
-%global _commit_sha %(curl -Ssf %{_api_base_url}/tags/%{_tag_sha} | jq -re '.object | select(.type == "commit") | .sha')
-%global _commit_sha_short %(head -c 7 <<< %{_commit_sha})
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -59,7 +54,13 @@ _GO_BIN_DIR=$(realpath "go/bin")
 export PATH="${_GO_BIN_DIR}:${PATH}"
 
 make web
-make VERSION=%{version} COMMIT=%{_commit_sha_short} cli-linux-server
+
+# Fetch commit SHA
+API_BASE_URL="https://api.github.com/repos/binwiederhier/ntfy/git"
+TAG_SHA=$(curl -Ssf "${API_BASE_URL}/ref/tags/v%{version}" | jq -re '.object.sha')
+COMMIT_SHA=$(curl -Ssf "${API_BASE_URL}/tags/${TAG_SHA}" | jq -re '.object | select(.type == "commit") | .sha')
+COMMIT_SHA_SHORT=$(head -c 7 <<< ${COMMIT_SHA})
+make VERSION=%{version} COMMIT=${COMMIT_SHA_SHORT} cli-linux-server
 
 %check
 _GO_BIN_DIR=$(realpath "go/bin")
@@ -130,6 +131,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Sun Nov 19 2023 cyqsimon - 2.7.0-4
+- Use pure shell scripting instead of RPM macros to get commit SHA
+
 * Sat Nov 18 2023 cyqsimon - 2.7.0-2
 - Automatically obtain commit SHA
 
