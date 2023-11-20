@@ -4,7 +4,7 @@
 
 Name:           ntfysh
 Version:        2.8.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -63,6 +63,17 @@ tar -xf "${_GO_DL_NAME}"
 _GO_BIN_DIR=$(realpath "go/bin")
 export PATH="${_GO_BIN_DIR}:${PATH}"
 
+make web
+
+%if 0%{?el7}
+    source /opt/rh/rh-python38/enable
+%endif
+%if 0%{?el8}
+    export PYTHON=python3.9
+    export PIP=pip3.9
+%endif
+make -e docs
+
 # Fetch commit SHA
 API_BASE_URL="https://api.github.com/repos/binwiederhier/ntfy/git"
 TAG_INFO="$(curl -Ssf "${API_BASE_URL}/ref/tags/v%{version}")"
@@ -76,17 +87,6 @@ else
 fi
 COMMIT_SHA_SHORT=$(head -c 7 <<< ${COMMIT_SHA})
 make VERSION=%{version} COMMIT=${COMMIT_SHA_SHORT} cli-linux-server
-
-make web
-
-%if 0%{?el7}
-    source /opt/rh/rh-python38/enable
-%endif
-%if 0%{?el8}
-    export PYTHON=python3.9
-    export PIP=pip3.9
-%endif
-make -e docs
 
 %check
 _GO_BIN_DIR=$(realpath "go/bin")
@@ -157,6 +157,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Mon Nov 20 2023 cyqsimon - 2.8.0-2
+- Build web & docs before building binary
+
 * Mon Nov 20 2023 cyqsimon - 2.8.0-1
 - Release 2.8.0
 - Build docs
