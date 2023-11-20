@@ -3,8 +3,8 @@
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.7.0
-Release:        3%{?dist}
+Version:        2.8.0
+Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -14,10 +14,20 @@ Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 Requires(pre):  shadow-utils
 BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros tar
 # npm is packaged under different names
-%if 0%{?rhel} >= 10 || 0%{?fedora} >= 37
+%if 0%{?rhel} >= 10 || 0%{?fedora}
 BuildRequires: nodejs-npm
 %else
 BuildRequires: npm
+%endif
+# minimum python version is 3.8, which has differing availability
+%if 0%{?el7}
+BuildRequires: rh-python38
+%endif
+%if 0%{?el8}
+BuildRequires: python39
+%endif
+%if 0%{?rhel} >= 9 || 0%{?fedora}
+BuildRequires: python3
 %endif
 
 %description
@@ -53,8 +63,6 @@ tar -xf "${_GO_DL_NAME}"
 _GO_BIN_DIR=$(realpath "go/bin")
 export PATH="${_GO_BIN_DIR}:${PATH}"
 
-make web
-
 # Fetch commit SHA
 API_BASE_URL="https://api.github.com/repos/binwiederhier/ntfy/git"
 TAG_INFO="$(curl -Ssf "${API_BASE_URL}/ref/tags/v%{version}")"
@@ -68,6 +76,17 @@ else
 fi
 COMMIT_SHA_SHORT=$(head -c 7 <<< ${COMMIT_SHA})
 make VERSION=%{version} COMMIT=${COMMIT_SHA_SHORT} cli-linux-server
+
+make web
+
+%if 0%{?el7}
+    source /opt/rh/rh-python38/enable
+%endif
+%if 0%{?el8}
+    export PYTHON=python3.9
+    export PIP=pip3.9
+%endif
+make -e docs
 
 %check
 _GO_BIN_DIR=$(realpath "go/bin")
@@ -138,6 +157,11 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Mon Nov 20 2023 cyqsimon - 2.8.0-1
+- Release 2.8.0
+- Build docs
+  - Fixes https://github.com/cyqsimon/ntfysh-spec/issues/2
+
 * Sun Nov 19 2023 cyqsimon - 2.7.0-4
 - Use pure shell scripting instead of RPM macros to get commit SHA
 
