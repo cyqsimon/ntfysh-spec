@@ -3,8 +3,8 @@
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.8.0
-Release:        2%{?dist}
+Version:        2.9.0
+Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -157,6 +157,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Fri Mar 08 2024 cyqsimon - 2.9.0-1
+- Release 2.9.0
+
 * Mon Nov 20 2023 cyqsimon - 2.8.0-2
 - Build web & docs before building binary
 
