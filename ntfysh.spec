@@ -4,7 +4,7 @@
 
 Name:           ntfysh
 Version:        2.11.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -20,9 +20,6 @@ BuildRequires: nodejs-npm
 BuildRequires: npm
 %endif
 # minimum python version is 3.8, which has differing availability
-%if 0%{?el7}
-BuildRequires: rh-python38
-%endif
 %if 0%{?el8}
 BuildRequires: python39
 %endif
@@ -65,9 +62,6 @@ export PATH="${_GO_BIN_DIR}:${PATH}"
 
 make web
 
-%if 0%{?el7}
-    source /opt/rh/rh-python38/enable
-%endif
 %if 0%{?el8}
     export PYTHON=python3.9
     export PIP=pip3.9
@@ -157,6 +151,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Tue Aug 13 2024 cyqsimon - 2.11.0-2
+- Remove provisions for EL7
+
 * Tue May 14 2024 cyqsimon - 2.11.0-1
 - Release 2.11.0
 
