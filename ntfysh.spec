@@ -90,18 +90,16 @@ make test
 
 %install
 # bin
-install -Dpm 755 dist/ntfy_linux_server/%{_prj_name} %{buildroot}%{_bindir}/%{_prj_name}
+install -Dpm 755 -t %{buildroot}%{_bindir}/ dist/ntfy_linux_server/%{_prj_name}
 
 # logo
 install -Dpm 644 web/src/img/%{_prj_name}.png %{buildroot}%{_datadir}/%{_prj_name}/logo.png
 
 # units
-install -Dpm 644 client/%{_prj_name}-client.service %{buildroot}%{_unitdir}/%{_prj_name}-client.service
-install -Dpm 644 server/%{_prj_name}.service %{buildroot}%{_unitdir}/%{_prj_name}.service
+install -Dpm 644 -t %{buildroot}%{_unitdir}/ client/%{_prj_name}-client.service server/%{_prj_name}.service
 
 # configs
-install -Dpm 644 client/client.yml %{buildroot}%{_sysconfdir}/%{_prj_name}/client.yml
-install -Dpm 644 server/server.yml %{buildroot}%{_sysconfdir}/%{_prj_name}/server.yml
+install -Dpm 644 -t %{buildroot}%{_sysconfdir}/%{_prj_name}/ client/client.yml server/server.yml
 
 # doc
 mkdir -p %{buildroot}%{_docdir}/%{name}
@@ -153,6 +151,7 @@ fi
 %changelog
 * Mon Dec 22 2025 cyqsimon - 2.15.0-1
 - Release 2.15.0
+- Use `install -t` syntax
 
 * Wed Aug 06 2025 cyqsimon - 2.14.0-1
 - Release 2.14.0
