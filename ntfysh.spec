@@ -4,14 +4,14 @@
 
 Name:           ntfysh
 Version:        2.15.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
 URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
+Source1:        %{_prj_name}.sysusers
 
-Requires(pre):  shadow-utils
 BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros tar
 # npm is packaged under different names
 %if 0%{?rhel} >= 10 || 0%{?fedora}
@@ -27,6 +27,7 @@ BuildRequires: python39
 BuildRequires: python3
 %endif
 %{?systemd_requires}
+%{?sysusers_requires_compat}
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -100,6 +101,9 @@ install -Dpm 644 web/src/img/%{_prj_name}.png %{buildroot}%{_datadir}/%{_prj_nam
 install -Dpm 644 -t %{buildroot}%{_unitdir}/ client/%{_prj_name}-client.service server/%{_prj_name}.service
 install -Dpm 644 -t %{buildroot}%{_userunitdir}/ client/user/%{_prj_name}-client.service
 
+# sysusers
+install -Dpm 644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{_prj_name}.conf
+
 # configs
 install -Dpm 644 -t %{buildroot}%{_sysconfdir}/%{_prj_name}/ client/client.yml server/server.yml
 
@@ -120,17 +124,14 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_unitdir}/%{_prj_name}-client.service
 %{_unitdir}/%{_prj_name}.service
 %{_userunitdir}/%{_prj_name}-client.service
+%{_sysusersdir}/%{_prj_name}.conf
 %config(noreplace) %{_sysconfdir}/%{_prj_name}/*
 %{_docdir}/%{name}/*
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_localstatedir}/cache/%{_prj_name}
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_sharedstatedir}/%{_prj_name}
 
 %pre
-# create user
-echo "Creating user '%{_ntfy_user}' if it does not exist..."
-getent passwd %{_ntfy_user} >/dev/null || \
-    useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
-    --no-create-home --comment "ntfy service user" %{_ntfy_user}
+%sysusers_create_compat %{SOURCE1}
 
 %post
 %systemd_post %{_prj_name}-client.service %{_prj_name}.service
@@ -145,6 +146,9 @@ getent passwd %{_ntfy_user} >/dev/null || \
 %systemd_user_postun_with_restart %{_prj_name}-client.service
 
 %changelog
+* Mon Dec 22 2025 cyqsimon - 2.15.0-2
+- Use sysusers for adding service user
+
 * Mon Dec 22 2025 cyqsimon - 2.15.0-1
 - Release 2.15.0
 - Use `install -t` syntax
