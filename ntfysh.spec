@@ -97,6 +97,7 @@ install -Dpm 644 web/src/img/%{_prj_name}.png %{buildroot}%{_datadir}/%{_prj_nam
 
 # units
 install -Dpm 644 -t %{buildroot}%{_unitdir}/ client/%{_prj_name}-client.service server/%{_prj_name}.service
+install -Dpm 644 -t %{buildroot}%{_userunitdir}/ client/user/%{_prj_name}-client.service
 
 # configs
 install -Dpm 644 -t %{buildroot}%{_sysconfdir}/%{_prj_name}/ client/client.yml server/server.yml
@@ -117,6 +118,7 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %{_datadir}/%{_prj_name}/*
 %{_unitdir}/%{_prj_name}-client.service
 %{_unitdir}/%{_prj_name}.service
+%{_userunitdir}/%{_prj_name}-client.service
 %config(noreplace) %{_sysconfdir}/%{_prj_name}/*
 %{_docdir}/%{name}/*
 %attr(750, %{_ntfy_user}, %{_ntfy_user}) %{_localstatedir}/cache/%{_prj_name}
