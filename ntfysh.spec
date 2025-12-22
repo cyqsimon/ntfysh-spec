@@ -26,6 +26,7 @@ BuildRequires: python39
 %if 0%{?rhel} >= 9 || 0%{?fedora}
 BuildRequires: python3
 %endif
+%{?systemd_requires}
 
 %description
 ntfy (pronounce: notify) is a simple HTTP-based pub-sub notification service.
@@ -131,29 +132,23 @@ getent passwd %{_ntfy_user} >/dev/null || \
     useradd --system --home-dir %{_sharedstatedir}/%{_prj_name} --shell /sbin/nologin \
     --no-create-home --comment "ntfy service user" %{_ntfy_user}
 
-%preun
-# if remove, then stop and disable services
-if [[ "$1" -lt 1 ]]; then
-    for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
-        echo "Stopping and disabling ${SVC} ..."
-        systemctl disable --now ${SVC}
-    done
-fi
-
 %post
-# if update, then restart services if running
-if [[ "$1" -gt 1 ]]; then
-    systemctl daemon-reload
-    for SVC in "%{_prj_name}.service" "%{_prj_name}-client.service"; do
-        echo "Restarting ${SVC} if it's running..."
-        systemctl try-restart ${SVC}
-    done
-fi
+%systemd_post %{_prj_name}-client.service %{_prj_name}.service
+%systemd_user_post %{_prj_name}-client.service
+
+%preun
+%systemd_preun %{_prj_name}-client.service %{_prj_name}.service
+%systemd_user_preun %{_prj_name}-client.service
+
+%postun
+%systemd_postun_with_restart %{_prj_name}-client.service %{_prj_name}.service
+%systemd_user_postun_with_restart %{_prj_name}-client.service
 
 %changelog
 * Mon Dec 22 2025 cyqsimon - 2.15.0-1
 - Release 2.15.0
 - Use `install -t` syntax
+- Use systemd macros for service scriptlets
 
 * Wed Aug 06 2025 cyqsimon - 2.14.0-1
 - Release 2.14.0
