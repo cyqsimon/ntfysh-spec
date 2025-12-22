@@ -3,7 +3,7 @@
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.14.0
+Version:        2.15.0
 Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
@@ -151,6 +151,9 @@ if [[ "$1" -gt 1 ]]; then
 fi
 
 %changelog
+* Mon Dec 22 2025 cyqsimon - 2.15.0-1
+- Release 2.15.0
+
 * Wed Aug 06 2025 cyqsimon - 2.14.0-1
 - Release 2.14.0
 
