@@ -3,8 +3,8 @@
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.15.0
-Release:        2%{?dist}
+Version:        2.16.0
+Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -146,6 +146,9 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %systemd_user_postun_with_restart %{_prj_name}-client.service
 
 %changelog
+* Wed Jan 21 2026 cyqsimon - 2.16.0-1
+- Release 2.16.0
+
 * Mon Dec 22 2025 cyqsimon - 2.15.0-2
 - Use sysusers for adding service user
 
