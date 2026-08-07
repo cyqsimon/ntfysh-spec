@@ -1,0 +1,28 @@
+From 28d874585aba6f3b291e3262e7b0dde05ccb4636 Mon Sep 17 00:00:00 2001
+From: cyqsimon <28627918+cyqsimon@users.noreply.github.com>
+Date: Fri, 7 Aug 2026 10:51:37 +0800
+Subject: [PATCH 1/1] Patch: downgrade to vite-7 to avoid segfault in bulid
+ container
+
+See https://github.com/vitejs/vite/issues/22918
+---
+ Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 71bebebe..db46a1af 100644
+--- a/Makefile
++++ b/Makefile
+@@ -151,7 +151,8 @@ web-build:
+ 			../server/site/config.js
+ 
+ web-deps:
+-	cd web && $(NPM) ci
++	cd web && $(NPM) ci \
++		&& npm install --save-dev vite@7 @vitejs/plugin-react@5
+ 	# Use "npm ci" so that we don't change the package lock file
+ 	# If this fails for .svg files, optimize them with svgo
+ 
+-- 
+2.55.0
+

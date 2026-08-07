@@ -4,13 +4,14 @@
 
 Name:           ntfysh
 Version:        2.25.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
 URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 Source1:        %{_prj_name}.sysusers
+Patch0:         0001-vite7-downgrade.patch
 
 BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros tar
 # npm is packaged under different names
@@ -37,7 +38,7 @@ any computer, entirely without signup or cost. It's also open source if you
 want to run your own.
 
 %prep
-%autosetup -n %{_prj_name}-%{version}
+%autosetup -n %{_prj_name}-%{version} -p 1
 
 # Use latest official stable Go build
 _GO_VER="$(curl -Lf https://golang.org/VERSION?m=text | head -n1)"
@@ -146,6 +147,9 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %systemd_user_postun_with_restart %{_prj_name}-client.service
 
 %changelog
+* Fri Aug 07 2026 cyqsimon - 2.25.0-2
+- Downgrade to vite-7 for web build as workaround to container segfault issue
+
 * Thu Jun 25 2026 cyqsimon - 2.25.0-1
 - Release 2.25.0
 
