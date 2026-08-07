@@ -3,7 +3,7 @@
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.26.3
+Version:        2.27.0
 Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
@@ -147,6 +147,9 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %systemd_user_postun_with_restart %{_prj_name}-client.service
 
 %changelog
+* Fri Aug 07 2026 cyqsimon - 2.27.0-1
+- Release 2.27.0
+
 * Fri Aug 07 2026 cyqsimon - 2.26.3-1
 - Release 2.26.3
 
