@@ -3,8 +3,8 @@
 %global _ntfy_user ntfy
 
 Name:           ntfysh
-Version:        2.27.0
-Release:        2%{?dist}
+Version:        2.28.0
+Release:        1%{?dist}
 Summary:        Send push notifications to your phone or desktop via PUT/POST
 
 License:        ASL 2.0 AND GPLv2
@@ -12,7 +12,6 @@ URL:            https://ntfy.sh/
 Source0:        https://github.com/binwiederhier/ntfy/archive/v%{version}.tar.gz
 Source1:        %{_prj_name}.sysusers
 Patch0:         0001-vite7-downgrade.patch
-Patch1:         0002-bump-rollup.patch
 
 BuildRequires:  curl gcc git glibc-static jq systemd-rpm-macros tar
 # npm is packaged under different names
@@ -148,6 +147,10 @@ mkdir -p %{buildroot}%{_sharedstatedir}/%{_prj_name}
 %systemd_user_postun_with_restart %{_prj_name}-client.service
 
 %changelog
+* Sat Aug 29 2026 cyqsimon - 2.28.0-1
+- Release 2.28.0
+- Remove rollup bump patch (fixed upstream)
+
 * Wed Aug 19 2026 cyqsimon - 2.27.0-2
 - Bump rollup to 4.62.4 to fix glibc version requirement issue on EL8
 
